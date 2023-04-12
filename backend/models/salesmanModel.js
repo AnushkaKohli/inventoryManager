@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 
-const userSchema = mongoose.Schema({
+const userSchema = new mongoose.Schema({
     name:{
         type : String,
         required : [true, "Please add a name"]
@@ -18,10 +19,15 @@ const userSchema = mongoose.Schema({
         type : String,
         required : [true, "Please add a password"],
         minLength : [6, "Password must be up to 6 characters"],
-        maxLength : [23, "Password must not be more than 23 characters"]
+        // maxLength : [23, "Password must not be more than 23 characters"]
     },
     accountType : {
-
+        type : String,
+        required : [true, "Please add the account type"],
+        enum : {
+            values : ['Admin', 'Salesman', 'Inventory Manager', 'Sales Manager'],
+            message : "You must be Admin or Salesman or Inventory Manager or Sales Manager to register/login"
+        }
     }
     //,
     // photo : {
@@ -42,5 +48,19 @@ const userSchema = mongoose.Schema({
     timestamps : true
 });
 
-const User = mongoose.model("User", userSchema);
+//Encrypt password before saving to DB
+userSchema.pre("save", async function(next){
+    //Only hash the password if it has been modified (or is new)
+    if(!this.isModified("password")){
+        return next();
+    }
+
+    //Hash password
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(this.password, salt);
+    this.password = hashedPassword;
+    next();
+});
+
+const User = new mongoose.model("User", userSchema);
 module.exports = User;
