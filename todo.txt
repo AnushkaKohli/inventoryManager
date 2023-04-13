@@ -1,0 +1,6 @@
+[x] conditional rendering
+[x] data -> map rendering
+[] react search filter
+[] add data modal
+[] react toastify
+[] data fetching
