@@ -108,8 +108,15 @@ const loginUser = asyncHandler ( async (req, res) => {
     //Generate Token
     // const token = generateToken(user._id);
 
-    //Send HTTP-only cookie
-    if(user && passwordIsCorrect){
+    // //Send HTTP-only cookie
+    // res.cookie("token", token, {
+    //     path : "/",
+    //     httpOnly : true,
+    //     expires : new Date(Date.now() + 1000 * 86400),
+    //     sameSite : "none",
+    //     secure : true
+    // });
+    if (user && passwordIsCorrect){
         res.json({
             _id: user.id,
             name: user.name,
@@ -180,6 +187,22 @@ const logout = asyncHandler (async(req, res) => {
         message : "Successfully logged out"
     });
 });
+const loginStatus = asyncHandler(async(req, res) => {
+    const { name, email, _id,accountType } = req.user;
+    console.log(req.user);
+    if(!name&&!email&&!_id&&!accountType){
+        res.status(401).json(false);
+    }else{
+        res.status(200).json(true);   
+    }
+    // res.status(200).json({
+    //   id: _id,
+    //   name,
+    //   email,
+    //   accountType
+    // });
+});
+
 
 //Get User Data
 const getUser = asyncHandler (async(req, res) => {
@@ -203,15 +226,15 @@ const getUser = asyncHandler (async(req, res) => {
 // });
 
 //Get Login Status
-const loginStatus = asyncHandler(async(req, res) => {
-    const { name, email, _id, accountType } = req.user;
-    console.log(req.user);
-    if(!name && !email && !_id && !accountType){
-        res.status(401).json(false);
-    }else{
-        res.status(200).json(true);   
-    }
-});
+// const loginStatus = asyncHandler(async(req, res) => {
+//     const { name, email, _id, accountType } = req.user;
+//     console.log(req.user);
+//     if(!name && !email && !_id && !accountType){
+//         res.status(401).json(false);
+//     }else{
+//         res.status(200).json(true);   
+//     }
+// });
 // const loginStatus = asyncHandler(async(req, res) => {
 //     const token = req.cookies.token;
 //     console.log(req.cookies);
