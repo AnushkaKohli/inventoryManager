@@ -1,8 +1,8 @@
 const asyncHandler = require("express-async-handler");
-const mongoose = require("mongoose");
-const User = require("../models/salesmanModel");
+const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+
 
 const generateToken = (id) => {
     //we create a token with id
@@ -56,6 +56,7 @@ const registerUser = asyncHandler(
 
         //Generate Token
         const token = generateToken(user._id);
+        // console.log(token);
 
         //Send HTTP-only cookie
         res.cookie("token", token, {
@@ -70,6 +71,7 @@ const registerUser = asyncHandler(
             //This marks the cookie to be used only with https.
             secure : true
         });
+        // console.log(res.cookie);
 
         if(user){
             const {_id, name, email, accountType} = user;
@@ -86,7 +88,7 @@ const registerUser = asyncHandler(
 
 //Login User
 const loginUser = asyncHandler ( async (req, res) => {
-    const{email, password} = req.body;
+    const{ email, password } = req.body;
 
     //Validate Request
     if (!email || !password) {
@@ -95,7 +97,7 @@ const loginUser = asyncHandler ( async (req, res) => {
     }
 
     //Check if user email exists in the database
-    const user = await User.findOne({email});
+    const user = await User.findOne({ email });
     if (!user) {
         res.status(400);
         throw new Error ("User not found, please register");
@@ -104,20 +106,15 @@ const loginUser = asyncHandler ( async (req, res) => {
     const passwordIsCorrect = await bcrypt.compare(password, user.password);
 
     //Generate Token
-    const token = generateToken(user._id);
+    // const token = generateToken(user._id);
 
     //Send HTTP-only cookie
-    res.cookie("token", token, {
-        path : "/",
-        httpOnly : true,
-        expires : new Date(Date.now() + 1000 * 86400),
-        sameSite : "none",
-        secure : true
-    });
-    if (user && passwordIsCorrect){
-        const {_id, name, email, accountType} = user;
-        res.status(200).json({
-            _id, name, email, accountType, token
+    if(user && passwordIsCorrect){
+        res.json({
+            _id: user.id,
+            name: user.name,
+            email: user.email,
+            token: generateToken(user.id),
         });
     }
     else{
@@ -125,6 +122,49 @@ const loginUser = asyncHandler ( async (req, res) => {
         throw new Error ("Invalid email or passowrd");
     }
 });
+// const loginUser = asyncHandler ( async (req, res) => {
+//     const{ email, password } = req.body;
+
+//     //Validate Request
+//     if (!email || !password) {
+//         res.status(400);
+//         throw new Error ("Please add email and password");
+//     }
+
+//     //Check if user email exists in the database
+//     const user = await User.findOne({ email });
+//     if (!user) {
+//         res.status(400);
+//         throw new Error ("User not found, please register");
+//     }
+//     //User exists, check if the password is correct
+//     const passwordIsCorrect = await bcrypt.compare(password, user.password);
+
+//     //Generate Token
+//     const token = generateToken(user._id);
+
+//     //Send HTTP-only cookie
+//     if(passwordIsCorrect){
+//         res.cookie("token", token, {
+//             path : "/",
+//             httpOnly : true,
+//             expires : new Date(Date.now() + 1000 * 86400),
+//             sameSite : "none",
+//             secure : true
+//         });
+//     }
+//     if (user && passwordIsCorrect){
+//         const { _id, name, email, accountType } = user;
+//         res.status(200).json({
+//             _id, name, email, accountType, token
+//         });
+//         // res.send("Successfully logged in");
+//     }
+//     else{
+//         res.status(400);
+//         throw new Error ("Invalid email or passowrd");
+//     }
+// });
 
 //Logout User
 const logout = asyncHandler (async(req, res) => {
@@ -143,22 +183,115 @@ const logout = asyncHandler (async(req, res) => {
 
 //Get User Data
 const getUser = asyncHandler (async(req, res) => {
-    const user = await User.findById(req.user._id);
-    if(user){
         const {_id, name, email, accountType} = user;
         res.status(200).json({
             _id, name, email, accountType
         });
+});
+// const getUser = asyncHandler (async(req, res) => {
+//     const user = await User.findById(req.user._id);
+//     if(user){
+//         const {_id, name, email, accountType} = user;
+//         res.status(200).json({
+//             _id, name, email, accountType
+//         });
+//     }
+//     else{
+//         res.status(400);
+//         throw new Error ("User not found");
+//     }
+// });
+
+//Get Login Status
+const loginStatus = asyncHandler(async(req, res) => {
+    const { name, email, _id, accountType } = req.user;
+    console.log(req.user);
+    if(!name && !email && !_id && !accountType){
+        res.status(401).json(false);
+    }else{
+        res.status(200).json(true);   
     }
-    else{
-        res.status(400);
+});
+// const loginStatus = asyncHandler(async(req, res) => {
+//     const token = req.cookies.token;
+//     console.log(req.cookies);
+//     if(!token){
+//         return res.json(false);
+//     }
+//     //Verify token and to check if the token has not expired
+//     //We are verifing the token wrt the JWT_SECRET
+//     const verified = jwt.verify(token, process.env.JWT_SECRET);
+//     if(verified){
+//         return res.json(true);
+//     }
+//     return res.json(false);
+// });
+
+//Update User
+const updateUser = asyncHandler (async (req, res) => {
+    const user = await User.findById(req.user._id);
+    if(user){
+        //Destructuring all the properties of the user
+        const {name, email, accountType} = user;
+        user.email = email;
+        user.name = req.body.name || name;
+        user.accountType = req.body.accountType || accountType;
+
+        const updatedUser = await user.save();
+        res.status(200).json({ _id : updatedUser._id, 
+            name : updatedUser.name, 
+            email : updatedUser.email, 
+            accountType : updatedUser.accountType 
+        });
+    } else {
+        res.status(404)
         throw new Error ("User not found");
     }
+});
+
+//Change password of the user
+const changePassword = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.user._id);
+    const {oldPassword, password} = req.body;
+
+    //Validate if the user exists
+    if(!user){
+        res.status(400);
+        throw new Error("User not found, please sign up");
+    }
+
+    //Validate to check if new and old password has been entered
+    if(!oldPassword || !password){
+        res.status(400);
+        throw new Error("Please add old and new password");
+    }
+
+    //To check if the old password enetered matches password in the DB
+    const passwordIsCorrect = await bcrypt.compare(oldPassword, user.password);
+
+    //Save new password
+    if(user && passwordIsCorrect){
+        user.password = password;
+        await user.save();
+        res.status(200).send("Password changed successfully");
+    } else {
+        res.status(400);
+        throw new Error ("Old password is incorrect");
+    }
+});
+
+//Forgot Password - not using this functionality
+const forgotPassword = asyncHandler (async (req, res) => {
+    res.send("Forgot Password");
 });
 
 module.exports = {
     registerUser,
     loginUser,
     logout,
-    getUser
+    getUser, 
+    loginStatus,
+    updateUser,
+    changePassword,
+    forgotPassword
 };
