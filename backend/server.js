@@ -33,10 +33,10 @@ app.use(errorHandler);
 
 //Connecting to mongoDB
 const PORT = process.env.PORT || 3000;
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect("mongodb+srv://anushka:anushka@inventorymanagementproj.zht4yrl.mongodb.net/StockMasterApp?retryWrites=true&w=majority")
     .then(function(){
         app.listen(PORT, function(){
-            console.log(`Server started on port $(PORT)`);
+            console.log(`Server started on port ${PORT}`);
         })
     })
     .catch(function(err){

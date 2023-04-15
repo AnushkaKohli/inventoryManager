@@ -104,20 +104,22 @@ const loginUser = asyncHandler ( async (req, res) => {
     const passwordIsCorrect = await bcrypt.compare(password, user.password);
 
     //Generate Token
-    const token = generateToken(user._id);
+    // const token = generateToken(user._id);
 
-    //Send HTTP-only cookie
-    res.cookie("token", token, {
-        path : "/",
-        httpOnly : true,
-        expires : new Date(Date.now() + 1000 * 86400),
-        sameSite : "none",
-        secure : true
-    });
+    // //Send HTTP-only cookie
+    // res.cookie("token", token, {
+    //     path : "/",
+    //     httpOnly : true,
+    //     expires : new Date(Date.now() + 1000 * 86400),
+    //     sameSite : "none",
+    //     secure : true
+    // });
     if (user && passwordIsCorrect){
-        const {_id, name, email, accountType} = user;
-        res.status(200).json({
-            _id, name, email, accountType, token
+        res.json({
+            _id: user.id,
+            name: user.name,
+            email: user.email,
+            token: generateToken(user.id),
         });
     }
     else{
@@ -140,25 +142,49 @@ const logout = asyncHandler (async(req, res) => {
         message : "Successfully logged out"
     });
 });
+const loginStatus = asyncHandler(async(req, res) => {
+    const { name, email, _id,accountType } = req.user;
+    console.log(req.user);
+    if(!name&&!email&&!_id&&!accountType){
+        res.status(401).json(false);
+    }else{
+        res.status(200).json(true);   
+    }
+    // res.status(200).json({
+    //   id: _id,
+    //   name,
+    //   email,
+    //   accountType
+    // });
+});
+
 
 //Get User Data
 const getUser = asyncHandler (async(req, res) => {
-    const user = await User.findById(req.user._id);
-    if(user){
-        const {_id, name, email, accountType} = user;
-        res.status(200).json({
-            _id, name, email, accountType
-        });
-    }
-    else{
-        res.status(400);
-        throw new Error ("User not found");
-    }
+    // const user = await User.findById(req.user._id);
+    // if(user){
+    //     const {_id, name, email, accountType} = user;
+    //     res.status(200).json({
+    //         _id, name, email, accountType
+    //     });
+    // }
+    const { name, email, _id,accountType } = req.user;
+  res.status(200).json({
+    id: _id,
+    name,
+    email,
+    accountType
+  });
+    // else{
+    //     res.status(400);
+    //     throw new Error ("User not found");
+    // }
 });
 
 module.exports = {
     registerUser,
     loginUser,
     logout,
-    getUser
+    getUser,
+    loginStatus
 };
