@@ -10,6 +10,8 @@ import SignUp from "./pages/SignUp";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { ChakraProvider } from "@chakra-ui/react";
 
+// npm run dev : to start the frontend
+
 function App() {
   const [isAuth, setIsAuth] = useState(true);
   // const [isLoggedIn, setisLoggedIn] = useState(null);

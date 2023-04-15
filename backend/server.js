@@ -8,6 +8,7 @@ const cookieParser = require("cookie-parser");
 
 
 const userRoute = require("./routes/userRoute");
+const adminRoute = require("./routes/adminRoute");
 const errorHandler = require("./middleware/errorMiddleware");
 
 const app = express();
@@ -22,6 +23,7 @@ app.use(cors());
 
 //Routes Middleware
 app.use("/api/users", userRoute);
+app.use("/api/admin", adminRoute);
 
 //Routes
 app.get("/", (req,res) => {

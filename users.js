@@ -1,3 +1,7 @@
+// APIs
+//PRODUCT - add, delete, update price(patch)
+//User - add, delete
+
 const admin = [
     {
         email: "johndoe@gmail.com",
