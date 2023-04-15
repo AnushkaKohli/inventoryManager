@@ -9,6 +9,9 @@ import {
   ModalCloseButton,
   useDisclosure,
   Button,
+  FormControl,
+  FormLabel,
+  Input,
 } from "@chakra-ui/react";
 
 // import Table from "../components/Table";
@@ -22,6 +25,10 @@ const Admin = () => {
 
   const deleteUser = () => {
     console.log("product deletes");
+  };
+
+  const addUser = () => {
+    console.log("userAdeed");
   };
 
   return (
@@ -106,13 +113,43 @@ const Admin = () => {
             <ModalContent>
               <ModalHeader>Add User</ModalHeader>
               <ModalCloseButton />
-              <ModalBody>Edit Product</ModalBody>
+              <ModalBody pb={6}>
+                <FormControl>
+                  <FormLabel>Username</FormLabel>
+                  <Input placeholder="johndoe" />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Email</FormLabel>
+                  <Input placeholder="johndoe@gmail.com" />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Password</FormLabel>
+                  <Input placeholder="******" />
+                </FormControl>
+                <FormControl mt={4}>
+                  <FormLabel>User Type</FormLabel>
+                  <select
+                    id="tags"
+                    className="border-4 p-1 rounded-sm"
+                    name="tags"
+                    // onChange={(e) => {
+                    //   setTags(e.currentTarget.value);
+                    // }}
+                  >
+                    <option value="admin">Admin</option>
+                    <option value="salesman">Salesman</option>
+                    <option value="salesmanager">SalesManager</option>
+                  </select>
+                </FormControl>
+              </ModalBody>
 
               <ModalFooter>
-                <Button colorScheme="blue" mr={3} onClick={onClose}>
-                  Close
+                <Button colorScheme="blue" mr={3} onClick={addUser}>
+                  Save
                 </Button>
-                <Button variant="ghost">Secondary Action</Button>
+                <Button variant="ghost" onClick={onClose}>
+                  Cancel
+                </Button>
               </ModalFooter>
             </ModalContent>
           </Modal>
@@ -145,7 +182,14 @@ const Admin = () => {
                         scope="col"
                         class="px-4 py-3.5 text-left text-sm font-normal text-gray-500 rtl:text-right dark:text-gray-400"
                       >
-                        Name
+                        Username
+                      </th>
+
+                      <th
+                        scope="col"
+                        class="px-4 py-3.5 text-left text-sm font-normal text-gray-500 rtl:text-right dark:text-gray-400"
+                      >
+                        Password
                       </th>
 
                       <th
@@ -181,6 +225,13 @@ const Admin = () => {
                               <div>
                                 <h4 class="text-gray-700 dark:text-gray-200">
                                   {users.name}
+                                </h4>
+                              </div>
+                            </td>
+                            <td class="whitespace-nowrap px-4 py-4 text-sm">
+                              <div>
+                                <h4 class="text-gray-700 dark:text-gray-200">
+                                  {users.password}
                                 </h4>
                               </div>
                             </td>
