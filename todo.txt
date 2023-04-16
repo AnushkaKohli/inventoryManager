@@ -1,7 +1,7 @@
 [x] conditional rendering
 [x] data -> map rendering
 [x] add data modal
-[] react search filter
 [] data fetching
+[] react search filter
 [] react toastify
 

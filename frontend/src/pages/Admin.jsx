@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -18,6 +18,28 @@ import {
 import { user } from "../user";
 
 const Admin = () => {
+  const [data, setData] = useState([]);
+
+  var options = {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  };
+
+  const fetchInfo = () => {
+    return fetch("http://localhost:5000/api/users/getUsers")
+      .then((res) => res.json())
+      .then((d) => setData(d));
+  };
+
+  useEffect(() => {
+    fetchInfo();
+  }, []);
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const editUser = () => {
     console.log("editing ...");
@@ -191,6 +213,12 @@ const Admin = () => {
                       >
                         Password
                       </th>
+                      {/* <th
+                        scope="col"
+                        class="px-4 py-3.5 text-left text-sm font-normal text-gray-500 rtl:text-right dark:text-gray-400"
+                      >
+                        Created on
+                      </th> */}
 
                       <th
                         scope="col"
@@ -205,36 +233,43 @@ const Admin = () => {
                     </tr>
                   </thead>
                   <tbody class="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
-                    {user.map((users) => {
+                    {data.map((dataObj, index) => {
                       return (
                         <>
                           <tr>
                             <td class="whitespace-nowrap px-4 py-4 text-sm font-medium">
                               <div>
                                 <h2 class="font-medium text-gray-800 dark:text-white">
-                                  {users.email}
+                                  {dataObj.email}
                                 </h2>
                               </div>
                             </td>
                             <td class="whitespace-nowrap px-12 py-4 text-sm font-medium">
                               <div class="inline gap-x-2 rounded-full bg-gray-100 px-3 py-1 text-sm font-normal text-gray-500 dark:bg-gray-800 dark:text-gray-400">
-                                {users.userType}
+                                {dataObj.accountType}
                               </div>
                             </td>
                             <td class="whitespace-nowrap px-4 py-4 text-sm">
                               <div>
                                 <h4 class="text-gray-700 dark:text-gray-200">
-                                  {users.name}
+                                  {dataObj.name}
                                 </h4>
                               </div>
                             </td>
                             <td class="whitespace-nowrap px-4 py-4 text-sm">
                               <div>
                                 <h4 class="text-gray-700 dark:text-gray-200">
-                                  {users.password}
+                                  {dataObj.password}
                                 </h4>
                               </div>
                             </td>
+                            {/* <td class="whitespace-nowrap px-4 py-4 text-sm">
+                              <div>
+                                <h4 class="text-gray-700 dark:text-gray-200">
+                                  {dataObj.createdAt}
+                                </h4>
+                              </div>
+                            </td> */}
                             <td class="whitespace-nowrap px-4 py-4 text-sm">
                               <div class="flex items-center">
                                 <svg

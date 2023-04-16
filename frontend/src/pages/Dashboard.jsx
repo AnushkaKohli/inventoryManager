@@ -17,6 +17,26 @@ import {
 } from "@chakra-ui/react";
 
 const Dashboard = () => {
+  const [data, setData] = useState([]); //product data from backend
+  const [product, setProduct] = useState({
+    itemName: "",
+    category: "",
+    price: "",
+    quantity: "",
+  }); //product data to be added
+
+  let name, value;
+
+  const fetchInfo = () => {
+    return fetch("http://localhost:5000/api/admin/getProducts")
+      .then((res) => res.json())
+      .then((d) => setData(d));
+  };
+
+  useEffect(() => {
+    fetchInfo();
+  }, [product]);
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   // const [products, setProducts] = useState([]);
 
@@ -27,16 +47,65 @@ const Dashboard = () => {
   //   }
   // })
 
-  const addProduct = () => {
-    console.log("product added");
+  const handleChange = (e) => {
+    // console.log(e);
+    name = e.target.name;
+    value = e.target.value;
+
+    setProduct({ ...product, [name]: value });
+    // setProduct({ ...product, [name]: "" });
+  };
+
+  const addProduct = async (e) => {
+    // console.log("product added");
+    e.preventDefault();
+
+    const { itemName, category, price, quantity } = product;
+
+    const res = await fetch("http://localhost:5000/api/admin/addproduct", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        itemName,
+        category,
+        price,
+        quantity,
+      }),
+    });
+
+    const response = await res.json();
+
+    console.log(response);
+    onClose();
+    // window.location.reload(true);
   };
 
   const editProduct = () => {
     console.log("editing ...");
   };
 
-  const deleteProduct = () => {
-    console.log("product deletes");
+  const deleteProduct = (id) => {
+    // console.log("product deletes");
+    // useEffect(() => {
+    // DELETE request using fetch with async/await
+    async function deletePost() {
+      await fetch("http://localhost:5000/api/admin/product", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id,
+        }),
+      });
+      // setStatus("Delete successful");
+    }
+
+    deletePost();
+    window.location.reload();
+    // }, []);
   };
 
   return (
@@ -124,15 +193,43 @@ const Dashboard = () => {
               <ModalBody pb={6}>
                 <FormControl>
                   <FormLabel>Product Name</FormLabel>
-                  <Input placeholder="product X" />
+                  <Input
+                    value={product.itemName}
+                    onChange={handleChange}
+                    name="itemName"
+                    placeholder="product X"
+                    type="text"
+                  />
                 </FormControl>
                 <FormControl>
-                  <FormLabel>Type</FormLabel>
-                  <Input placeholder="Electric" />
+                  <FormLabel>Category</FormLabel>
+                  <Input
+                    value={product.category}
+                    onChange={handleChange}
+                    name="category"
+                    placeholder="Electric"
+                    type="text"
+                  />
                 </FormControl>
                 <FormControl>
                   <FormLabel>Price</FormLabel>
-                  <Input placeholder="$499" />
+                  <Input
+                    value={product.price}
+                    onChange={handleChange}
+                    name="price"
+                    placeholder="$499"
+                    type="number"
+                  />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Quantity</FormLabel>
+                  <Input
+                    value={product.quantity}
+                    onChange={handleChange}
+                    name="quantity"
+                    placeholder="69"
+                    type="number"
+                  />
                 </FormControl>
               </ModalBody>
 
@@ -168,7 +265,7 @@ const Dashboard = () => {
                         scope="col"
                         class="px-12 py-3.5 text-left text-sm font-normal text-gray-500 rtl:text-right dark:text-gray-400"
                       >
-                        Type
+                        Category
                       </th>
 
                       <th
@@ -176,6 +273,12 @@ const Dashboard = () => {
                         class="px-4 py-3.5 text-left text-sm font-normal text-gray-500 rtl:text-right dark:text-gray-400"
                       >
                         Price
+                      </th>
+                      <th
+                        scope="col"
+                        class="px-4 py-3.5 text-left text-sm font-normal text-gray-500 rtl:text-right dark:text-gray-400"
+                      >
+                        Quantity
                       </th>
 
                       <th
@@ -191,26 +294,33 @@ const Dashboard = () => {
                     </tr>
                   </thead>
                   <tbody class="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
-                    {product.map((item) => {
+                    {data.map((dataObj, index) => {
                       return (
                         <>
                           <tr>
                             <td class="whitespace-nowrap px-4 py-4 text-sm font-medium">
                               <div>
                                 <h2 class="font-medium text-gray-800 dark:text-white">
-                                  {item.name}
+                                  {dataObj.itemName}
                                 </h2>
                               </div>
                             </td>
                             <td class="whitespace-nowrap px-12 py-4 text-sm font-medium">
                               <div class="inline gap-x-2 rounded-full bg-emerald-100/60 px-3 py-1 text-sm font-normal text-emerald-500 dark:bg-gray-800">
-                                {item.type}
+                                {dataObj.category}
                               </div>
                             </td>
                             <td class="whitespace-nowrap px-4 py-4 text-sm">
                               <div>
                                 <h4 class="text-gray-700 dark:text-gray-200">
-                                  ${item.price}
+                                  Rs {dataObj.price}
+                                </h4>
+                              </div>
+                            </td>
+                            <td class="whitespace-nowrap px-4 py-4 text-sm">
+                              <div>
+                                <h4 class="text-gray-700 dark:text-gray-200">
+                                  {dataObj.quantity}
                                 </h4>
                               </div>
                             </td>
@@ -239,7 +349,7 @@ const Dashboard = () => {
                                   fill="currentColor"
                                   class="bi bi-x-circle-fill text-red-600 cursor-pointer"
                                   viewBox="0 0 16 16"
-                                  onClick={deleteProduct}
+                                  onClick={() => deleteProduct(dataObj._id)}
                                 >
                                   <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z" />
                                 </svg>

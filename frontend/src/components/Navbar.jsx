@@ -69,11 +69,11 @@ const Navbar = ({ isAuth }) => {
           </div>
 
           <div
-            class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1"
+            class="items-center justify-between w-fit md:flex md:w-auto md:order-1"
             id="navbar-cta"
           >
             {isAuth ? (
-              <ul class="flex flex-col font-medium p-4 md:p-0 mt-4 border rounded-lg  md:flex-row md:space-x-8 md:mt-0 md:border-0 dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+              <ul class="flex flex-col font-medium p-4 sm:p-0 mt-4 border rounded-lg sm:flex-row sm:space-x-8 sm:mt-0 md:border-0 dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
                 <li>
                   <a
                     href="#"
