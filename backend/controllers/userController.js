@@ -204,7 +204,7 @@ const loginStatus = asyncHandler(async (req, res) => {
 //Get User Data
 const getUsers = asyncHandler(async (req, res) => {
   try {
-    const results = await User.find({}, { _id: 0, __v: 0 });
+    const results = await User.find({}, { __v: 0 });
     // const data = JSON.stringify(results).toArray();
     res.send(results);
   } catch (err) {
@@ -256,8 +256,7 @@ const deleteUser = async function (req, res) {
     const deleteUser = req.body.id;
 
     await User.findByIdAndDelete(deleteUser);
-    // await Product.findOneAndRemove({name : req.body.name});
-    res.send("Successfully deleted the product.");
+    res.send("Successfully deleted the User.");
   } catch (err) {
     res.send(err);
   }

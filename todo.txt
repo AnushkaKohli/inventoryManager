@@ -4,8 +4,8 @@
 [x] data fetching
 [] login/signup function
 [] update/edit product
-[] react search filter
-[] react toastify
+[x] react search filter
+[x] react toastify
 [] implement novu 
 [] homepage design
 [] 

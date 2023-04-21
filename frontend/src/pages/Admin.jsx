@@ -52,9 +52,20 @@ const Admin = () => {
 
   useEffect(() => {
     fetchInfo();
-  }, [data]);
+  }, []);
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  console.log(searchResults);
+
+  const {
+    isOpen: isAddOpen,
+    onOpen: onAddOpen,
+    onClose: onAddClose,
+  } = useDisclosure();
+  const {
+    isOpen: isEditOpen,
+    onOpen: onEditOpen,
+    onClose: onEditClose,
+  } = useDisclosure();
 
   const addUser = async (e) => {
     e.preventDefault();
@@ -82,13 +93,14 @@ const Admin = () => {
       console.log(response);
       // onClose();
       window.location.reload(); // reloading the component to reflect the changes
-      console.log("userAdeed");
+      // console.log("userAdeed");
       alert("userAdeed");
     }
   };
 
   const editUser = () => {
     console.log("editing ...");
+    onEditOpen();
   };
 
   const deleteUser = async (id) => {
@@ -102,6 +114,7 @@ const Admin = () => {
       }),
     });
     // setStatus("Delete successful");
+    window.location.reload();
   };
 
   const handleSearchChange = (e) => {
@@ -172,7 +185,7 @@ const Admin = () => {
 
           <button
             class="flex w-1/2 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-blue-500 px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-500 sm:w-auto"
-            onClick={onOpen}
+            onClick={onAddOpen}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -191,8 +204,8 @@ const Admin = () => {
 
             <span>Add User</span>
           </button>
-
-          <Modal isOpen={isOpen} onClose={onClose}>
+          {/* Add modal */}
+          <Modal isOpen={isAddOpen} onClose={onAddClose}>
             <ModalOverlay />
             <ModalContent>
               <ModalHeader>Add User</ModalHeader>
@@ -241,18 +254,84 @@ const Admin = () => {
                     //   setTags(e.currentTarget.value);
                     // }}
                   >
-                    <option value="admin">Admin</option>
-                    <option value="salesman">Salesman</option>
-                    <option value="inventory_manager">SalesManager</option>
+                    <option value="Admin">Admin</option>
+                    <option value="Salesman">Salesman</option>
+                    <option value="Sales manager">SalesManager</option>
+                    <option value="Inventory manager">InventoryManager</option>
                   </select>
                 </FormControl>
               </ModalBody>
-
               <ModalFooter>
                 <Button colorScheme="blue" mr={3} onClick={addUser}>
                   Save
                 </Button>
-                <Button variant="ghost" onClick={onClose}>
+                <Button variant="ghost" onClick={onAddClose}>
+                  Cancel
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+          <Modal isOpen={isEditOpen} onClose={onEditClose}>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Add User</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody pb={6}>
+                <FormControl>
+                  <FormLabel>Username</FormLabel>
+                  <Input
+                    placeholder="johndoe"
+                    onChange={handleChange}
+                    name="name"
+                    type="text"
+                    value={user.name}
+                  />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Email</FormLabel>
+                  <Input
+                    placeholder="johndoe@gmail.com"
+                    onChange={handleChange}
+                    name="email"
+                    type="email"
+                    value={user.email}
+                  />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Password</FormLabel>
+                  <Input
+                    placeholder="******"
+                    onChange={handleChange}
+                    name="password"
+                    type="text"
+                    value={user.password}
+                  />
+                </FormControl>
+                <FormControl mt={4}>
+                  <FormLabel>User Type</FormLabel>
+                  <select
+                    id="tags"
+                    className="border-4 p-1 rounded-sm"
+                    name="accountType"
+                    onChange={handleChange}
+                    type="text"
+                    value={user.accountType}
+                    // onChange={(e) => {
+                    //   setTags(e.currentTarget.value);
+                    // }}
+                  >
+                    <option value="Admin">Admin</option>
+                    <option value="Salesman">Salesman</option>
+                    <option value="Sales manager">SalesManager</option>
+                    <option value="Inventory manager">InventoryManager</option>
+                  </select>
+                </FormControl>
+              </ModalBody>
+              <ModalFooter>
+                <Button colorScheme="blue" mr={3} onClick={addUser}>
+                  Save
+                </Button>
+                <Button variant="ghost" onClick={onEditClose}>
                   Cancel
                 </Button>
               </ModalFooter>
@@ -290,12 +369,12 @@ const Admin = () => {
                         Username
                       </th>
 
-                      <th
+                      {/* <th
                         scope="col"
                         class="px-4 py-3.5 text-left text-sm font-normal text-gray-500 rtl:text-right dark:text-gray-400"
                       >
                         Password
-                      </th>
+                      </th> */}
                       {/* <th
                         scope="col"
                         class="px-4 py-3.5 text-left text-sm font-normal text-gray-500 rtl:text-right dark:text-gray-400"
@@ -316,7 +395,7 @@ const Admin = () => {
                     </tr>
                   </thead>
                   <tbody class="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
-                    {data.map((dataObj, index) => {
+                    {searchResults.map((dataObj, index) => {
                       return (
                         <>
                           <tr>
@@ -328,6 +407,11 @@ const Admin = () => {
                               </div>
                             </td>
                             <td class="whitespace-nowrap px-12 py-4 text-sm font-medium">
+                              {/* {dataObj.accountType === "Admin" ? ( */}
+                              {/* <div class="inline gap-x-2 rounded-full bg-gray-100 px-3 py-1 text-sm font-normal text-red-600 dark:bg-gray-800 dark:text-gray-400">
+                                  {dataObj.accountType}
+                                </div> */}
+
                               <div class="inline gap-x-2 rounded-full bg-gray-100 px-3 py-1 text-sm font-normal text-gray-500 dark:bg-gray-800 dark:text-gray-400">
                                 {dataObj.accountType}
                               </div>
@@ -339,13 +423,13 @@ const Admin = () => {
                                 </h4>
                               </div>
                             </td>
-                            <td class="whitespace-nowrap px-4 py-4 text-sm">
+                            {/* <td class="whitespace-nowrap px-4 py-4 text-sm">
                               <div>
                                 <h4 class="text-gray-700 dark:text-gray-200">
                                   {dataObj.password}
                                 </h4>
                               </div>
-                            </td>
+                            </td> */}
                             {/* <td class="whitespace-nowrap px-4 py-4 text-sm">
                               <div>
                                 <h4 class="text-gray-700 dark:text-gray-200">
@@ -370,13 +454,12 @@ const Admin = () => {
                                     d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"
                                   />
                                 </svg>
-
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
                                   width="20"
                                   height="20"
                                   fill="currentColor"
-                                  class="bi bi-x-circle-fill text-red-600 cursor-pointer"
+                                  class="bi bi-x-circle-fill text-red-600 cursor-pointer ml-3"
                                   viewBox="0 0 16 16"
                                   onClick={() => deleteUser(dataObj._id)}
                                 >
