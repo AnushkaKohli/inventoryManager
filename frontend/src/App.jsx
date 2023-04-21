@@ -9,18 +9,19 @@ import ProtectedRoutes from "./components/ProtectedRoutes";
 import SignUp from "./pages/SignUp";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { ChakraProvider } from "@chakra-ui/react";
+import AuthProvider from "./contexts/AuthProvider";
 
 // npm run dev : to start the frontend
 
 function App() {
-  const [isAuth, setIsAuth] = useState(true);
   // const [isLoggedIn, setisLoggedIn] = useState(null);
 
   return (
     <ChakraProvider>
-      <>
-        <Navbar isAuth={isAuth} />
-        {/* {isLoggedIn ? (
+      <AuthProvider>
+        <>
+          <Navbar />
+          {/* {isLoggedIn ? (
         <button className="border-2 p-2 m-4 flex " onClick={logOut}>
           Logout
         </button>
@@ -29,17 +30,18 @@ function App() {
           Login
         </button>
       )} */}
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route element={<ProtectedRoutes isAuth={isAuth} />}>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/bills" element={<Bills />} />
-          </Route>
-        </Routes>
-      </>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route element={<ProtectedRoutes />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/admin" element={<Admin />} />
+              <Route path="/bills" element={<Bills />} />
+            </Route>
+          </Routes>
+        </>
+      </AuthProvider>
     </ChakraProvider>
   );
 }
