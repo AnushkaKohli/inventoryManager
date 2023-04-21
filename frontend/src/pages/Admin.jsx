@@ -19,6 +19,7 @@ import { user } from "../user";
 
 const Admin = () => {
   const [data, setData] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
   const [user, setUser] = useState({
     name: "",
     email: "",
@@ -40,7 +41,13 @@ const Admin = () => {
   const fetchInfo = () => {
     return fetch("http://localhost:5000/api/users/getUsers")
       .then((res) => res.json())
-      .then((d) => setData(d));
+      .then((d) => {
+        setData(d);
+        return d;
+      })
+      .then((d) => {
+        setSearchResults(d);
+      });
   };
 
   useEffect(() => {
@@ -97,6 +104,16 @@ const Admin = () => {
     // setStatus("Delete successful");
   };
 
+  const handleSearchChange = (e) => {
+    const resultsArray = data.filter(
+      (data) =>
+        data.name.includes(e.target.value) ||
+        data.accountType.includes(e.target.value)
+    );
+
+    setSearchResults(resultsArray);
+  };
+
   return (
     <>
       <div className="text-4xl flex justify-center p-4 font-semibold">
@@ -148,6 +165,7 @@ const Admin = () => {
             <input
               type="text"
               placeholder="Search"
+              onChange={handleSearchChange}
               class="block w-full rounded-lg border border-gray-200 bg-white py-1.5 pl-11 pr-5 text-gray-700 placeholder-gray-400/70 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 rtl:pl-5 rtl:pr-11 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-blue-300 md:w-80"
             />
           </div>
