@@ -1,7 +1,9 @@
 [x] conditional rendering
-[x] data -> map rendering
+[x] database -> map rendering
 [x] add data modal
-[] data fetching
+[x] data fetching
+[] login/signup function
+[] update product
 [] react search filter
 [] react toastify
-
+[] implement novu 

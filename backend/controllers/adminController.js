@@ -32,7 +32,7 @@ const addProduct = async function (req, res) {
       quantity: req.body.quantity,
     });
     newProduct.save();
-    res.send("Successfully added a new product.");
+    // res.send("Successfully added a new product.");
   } catch (err) {
     res.send(err);
   }

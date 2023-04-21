@@ -1,8 +1,44 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   let navigate = useNavigate();
+
+  const [user, setUser] = useState({
+    email: "",
+    password: "",
+  });
+
+  let name, value;
+
+  const handleChange = (e) => {
+    // console.log(e);
+    name = e.target.name;
+    value = e.target.value;
+
+    setUser({ ...user, [name]: value }); //
+  };
+
+  const loginUser = async () => {
+    const { email, password } = user;
+
+    const res = await fetch("http://localhost:5000/api/users/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        // parsing the data that is to be sent to server
+        email,
+        password,
+      }),
+    });
+
+    const response = await res.json();
+
+    console.log(response);
+    navigate("/dashboard");
+  };
 
   return (
     <main className="w-full h-screen flex flex-col items-center justify-center px-4">
@@ -20,6 +56,9 @@ const Login = () => {
             <label className="font-medium">Email</label>
             <input
               type="email"
+              name="email"
+              onChange={handleChange}
+              value={user.email}
               required
               className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"
             />
@@ -28,6 +67,9 @@ const Login = () => {
             <label className="font-medium">Password</label>
             <input
               type="password"
+              name="password"
+              onChange={handleChange}
+              value={user.password}
               required
               className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"
             />
@@ -52,7 +94,10 @@ const Login = () => {
               Forgot password?
             </a>
           </div> */}
-          <button className="w-full px-4 py-2 text-white font-medium bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-600 rounded-lg duration-150">
+          <button
+            className="w-full px-4 py-2 text-white font-medium bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-600 rounded-lg duration-150"
+            onClick={loginUser}
+          >
             Sign in
           </button>
         </form>

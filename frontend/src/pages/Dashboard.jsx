@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 // import Table from "../components/Table";
-import { product } from "../product";
+// import { product } from "../product";
 import {
   Modal,
   ModalOverlay,
@@ -25,7 +28,16 @@ const Dashboard = () => {
     quantity: "",
   }); //product data to be added
 
-  let name, value;
+  let name, value; //declaring the variable
+
+  const handleChange = (e) => {
+    // console.log(e);
+    name = e.target.name;
+    value = e.target.value;
+
+    setProduct({ ...product, [name]: value });
+    // setProduct({ ...product, [name]: "" });
+  };
 
   const fetchInfo = () => {
     return fetch("http://localhost:5000/api/admin/getProducts")
@@ -35,7 +47,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchInfo();
-  }, [product]);
+  }, [data]);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   // const [products, setProducts] = useState([]);
@@ -47,20 +59,13 @@ const Dashboard = () => {
   //   }
   // })
 
-  const handleChange = (e) => {
-    // console.log(e);
-    name = e.target.name;
-    value = e.target.value;
+  // getting the name and value for all inputs and then updating the state using setProduct
 
-    setProduct({ ...product, [name]: value });
-    // setProduct({ ...product, [name]: "" });
-  };
-
-  const addProduct = async (e) => {
+  const addProduct = async () => {
     // console.log("product added");
-    e.preventDefault();
+    // e.preventDefault();
 
-    const { itemName, category, price, quantity } = product;
+    const { itemName, category, price, quantity } = product; //getting the value for each property from the state (product)
 
     const res = await fetch("http://localhost:5000/api/admin/addproduct", {
       method: "POST",
@@ -68,6 +73,7 @@ const Dashboard = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
+        // parsing the data that is to be sent to server
         itemName,
         category,
         price,
@@ -75,38 +81,57 @@ const Dashboard = () => {
       }),
     });
 
+    toast("Product Added", {
+      position: toast.POSITION.TOP_CENTER,
+    });
+
     const response = await res.json();
 
-    console.log(response);
-    onClose();
-    // window.location.reload(true);
+    // console.log(response);
+    window.location.reload();
+    alert("Product Added");
+    // onClose();
+    // reloading the component to reflect the changes
   };
 
   const editProduct = () => {
     console.log("editing ...");
   };
 
-  const deleteProduct = (id) => {
+  const deleteProduct = async (id) => {
     // console.log("product deletes");
     // useEffect(() => {
     // DELETE request using fetch with async/await
-    async function deletePost() {
-      await fetch("http://localhost:5000/api/admin/product", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id,
-        }),
-      });
-      // setStatus("Delete successful");
-    }
+    // async function deletePost() {
+    await fetch("http://localhost:5000/api/admin/product", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id,
+      }),
+    });
 
-    deletePost();
-    window.location.reload();
-    // }, []);
+    toast("Product Added", {
+      position: toast.POSITION.TOP_CENTER,
+    });
+
+    // window.location.reload();
+    // setStatus("Delete successful");
   };
+
+  const notify = () => toast("Wow so easy!");
+
+  // const totalInventoryValue = (price, quantity) => {
+  // }
+
+  let totalInventoryValue = 0;
+
+  // deletePost();
+  // window.location.reload();
+  // }, []);
+  // };
 
   return (
     <>
@@ -237,6 +262,7 @@ const Dashboard = () => {
                 <Button colorScheme="blue" mr={3} onClick={addProduct}>
                   Add
                 </Button>
+                <ToastContainer />
                 <Button variant="ghost" onClick={onClose}>
                   Cancel
                 </Button>
@@ -279,6 +305,12 @@ const Dashboard = () => {
                         class="px-4 py-3.5 text-left text-sm font-normal text-gray-500 rtl:text-right dark:text-gray-400"
                       >
                         Quantity
+                      </th>
+                      <th
+                        scope="col"
+                        class="px-4 py-3.5 text-left text-sm font-normal text-gray-500 rtl:text-right dark:text-gray-400"
+                      >
+                        Total Value
                       </th>
 
                       <th
@@ -325,6 +357,19 @@ const Dashboard = () => {
                               </div>
                             </td>
                             <td class="whitespace-nowrap px-4 py-4 text-sm">
+                              <div>
+                                <h4 class="text-gray-700 dark:text-gray-200">
+                                  Rs. {dataObj.quantity * dataObj.price}
+                                  <p className="hidden">
+                                    {
+                                      (totalInventoryValue +=
+                                        dataObj.quantity * dataObj.price)
+                                    }
+                                  </p>
+                                </h4>
+                              </div>
+                            </td>
+                            <td class="whitespace-nowrap px-4 py-4 text-sm">
                               <div class="flex items-center">
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
@@ -351,6 +396,7 @@ const Dashboard = () => {
                                   viewBox="0 0 16 16"
                                   onClick={() => deleteProduct(dataObj._id)}
                                 >
+                                  <ToastContainer />
                                   <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z" />
                                 </svg>
                               </div>
@@ -464,6 +510,12 @@ const Dashboard = () => {
                 </table>
               </div>
             </div>
+          </div>
+        </div>
+        {/* <button onClick={notify}> Notify </button> */}
+        <div class="flex justify-center items-center mt-5">
+          <div class="bg-gray-50 p-4 rounded-lg w-fit text-xl font-medium shadow-lg text-blue-500">
+            Total Inventory Value = {totalInventoryValue}
           </div>
         </div>
       </section>

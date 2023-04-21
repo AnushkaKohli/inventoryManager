@@ -250,6 +250,19 @@ const getUsers = asyncHandler(async (req, res) => {
 //     return res.json(false);
 // });
 
+// Delete User
+const deleteUser = async function (req, res) {
+  try {
+    const deleteUser = req.body.id;
+
+    await User.findByIdAndDelete(deleteUser);
+    // await Product.findOneAndRemove({name : req.body.name});
+    res.send("Successfully deleted the product.");
+  } catch (err) {
+    res.send(err);
+  }
+};
+
 //Update User
 const updateUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
@@ -316,6 +329,7 @@ module.exports = {
   getUsers,
   loginStatus,
   updateUser,
+  deleteUser,
   changePassword,
   forgotPassword,
 };

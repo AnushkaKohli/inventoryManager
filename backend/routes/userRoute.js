@@ -7,6 +7,7 @@ const {
   getUsers,
   loginStatus,
   updateUser,
+  deleteUser,
   changePassword,
   forgotPassword,
 } = require("../controllers/userController");
@@ -17,6 +18,7 @@ router.post("/login", loginUser);
 router.get("/logout", logout);
 router.get("/loggedin", protect, loginStatus);
 router.get("/getUsers", getUsers);
+router.get("/deleteUser", deleteUser);
 router.get("/loggedin", loginStatus);
 router.patch("/updateuser", protect, updateUser);
 router.patch("/changepassword", protect, changePassword);

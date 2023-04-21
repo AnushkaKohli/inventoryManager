@@ -19,17 +19,24 @@ import { user } from "../user";
 
 const Admin = () => {
   const [data, setData] = useState([]);
+  const [user, setUser] = useState({
+    name: "",
+    email: "",
+    password: "",
+    accountType: "",
+  });
 
-  var options = {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
+  let name, value;
+
+  const handleChange = (e) => {
+    // console.log(e);
+    name = e.target.name;
+    value = e.target.value;
+
+    setUser({ ...user, [name]: value }); //
   };
 
+  // fetching all the users from the database
   const fetchInfo = () => {
     return fetch("http://localhost:5000/api/users/getUsers")
       .then((res) => res.json())
@@ -38,19 +45,53 @@ const Admin = () => {
 
   useEffect(() => {
     fetchInfo();
-  }, []);
+  }, [data]);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const addUser = async () => {
+    // e.preventDefault();
+
+    const { name, email, password, accountType } = user; //getting the value for each property from the state (product)
+
+    const res = await fetch("http://localhost:5000/api/users/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        // parsing the data that is to be sent to server
+        name,
+        email,
+        password,
+        accountType,
+      }),
+    });
+
+    const response = await res.json();
+
+    // console.log(response);
+    // onClose();
+    window.location.reload(); // reloading the component to reflect the changes
+    console.log("userAdeed");
+    alert("userAdeed");
+  };
+
   const editUser = () => {
     console.log("editing ...");
   };
 
-  const deleteUser = () => {
-    console.log("product deletes");
-  };
-
-  const addUser = () => {
-    console.log("userAdeed");
+  const deleteUser = async (id) => {
+    await fetch("http://localhost:5000/api/users/deleteUser", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id,
+      }),
+    });
+    // setStatus("Delete successful");
   };
 
   return (
@@ -138,29 +179,50 @@ const Admin = () => {
               <ModalBody pb={6}>
                 <FormControl>
                   <FormLabel>Username</FormLabel>
-                  <Input placeholder="johndoe" />
+                  <Input
+                    placeholder="johndoe"
+                    onChange={handleChange}
+                    name="name"
+                    type="text"
+                    value={user.name}
+                  />
                 </FormControl>
                 <FormControl>
                   <FormLabel>Email</FormLabel>
-                  <Input placeholder="johndoe@gmail.com" />
+                  <Input
+                    placeholder="johndoe@gmail.com"
+                    onChange={handleChange}
+                    name="email"
+                    type="email"
+                    value={user.email}
+                  />
                 </FormControl>
                 <FormControl>
                   <FormLabel>Password</FormLabel>
-                  <Input placeholder="******" />
+                  <Input
+                    placeholder="******"
+                    onChange={handleChange}
+                    name="password"
+                    type="text"
+                    value={user.password}
+                  />
                 </FormControl>
                 <FormControl mt={4}>
                   <FormLabel>User Type</FormLabel>
                   <select
                     id="tags"
                     className="border-4 p-1 rounded-sm"
-                    name="tags"
+                    name="accountType"
+                    onChange={handleChange}
+                    type="text"
+                    value={user.accountType}
                     // onChange={(e) => {
                     //   setTags(e.currentTarget.value);
                     // }}
                   >
                     <option value="admin">Admin</option>
                     <option value="salesman">Salesman</option>
-                    <option value="salesmanager">SalesManager</option>
+                    <option value="inventory_manager">SalesManager</option>
                   </select>
                 </FormControl>
               </ModalBody>
@@ -295,7 +357,7 @@ const Admin = () => {
                                   fill="currentColor"
                                   class="bi bi-x-circle-fill text-red-600 cursor-pointer"
                                   viewBox="0 0 16 16"
-                                  onClick={deleteUser}
+                                  onClick={() => deleteUser(dataObj._id)}
                                 >
                                   <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z" />
                                 </svg>
