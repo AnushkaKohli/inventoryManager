@@ -49,32 +49,35 @@ const Admin = () => {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const addUser = async () => {
-    // e.preventDefault();
+  const addUser = async (e) => {
+    e.preventDefault();
 
     const { name, email, password, accountType } = user; //getting the value for each property from the state (product)
+    if (!user) {
+      alert("fill the data");
+    } else {
+      const res = await fetch("http://localhost:5000/api/users/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          // parsing the data that is to be sent to server
+          name,
+          email,
+          password,
+          accountType,
+        }),
+      });
 
-    const res = await fetch("http://localhost:5000/api/users/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        // parsing the data that is to be sent to server
-        name,
-        email,
-        password,
-        accountType,
-      }),
-    });
+      const response = await res.json();
 
-    const response = await res.json();
-
-    // console.log(response);
-    // onClose();
-    window.location.reload(); // reloading the component to reflect the changes
-    console.log("userAdeed");
-    alert("userAdeed");
+      console.log(response);
+      // onClose();
+      window.location.reload(); // reloading the component to reflect the changes
+      console.log("userAdeed");
+      alert("userAdeed");
+    }
   };
 
   const editUser = () => {

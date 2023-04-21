@@ -3,7 +3,9 @@
 [x] add data modal
 [x] data fetching
 [] login/signup function
-[] update product
+[] update/edit product
 [] react search filter
 [] react toastify
 [] implement novu 
+[] homepage design
+[] 

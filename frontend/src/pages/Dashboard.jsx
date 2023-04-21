@@ -21,6 +21,7 @@ import {
 
 const Dashboard = () => {
   const [data, setData] = useState([]); //product data from backend
+  const [searchResults, setSearchResults] = useState([]);
   const [product, setProduct] = useState({
     itemName: "",
     category: "",
@@ -42,13 +43,20 @@ const Dashboard = () => {
   const fetchInfo = () => {
     return fetch("http://localhost:5000/api/admin/getProducts")
       .then((res) => res.json())
-      .then((d) => setData(d));
+      .then((d) => {
+        setData(d);
+        return d;
+      })
+      .then((d) => {
+        setSearchResults(d);
+      });
   };
 
   useEffect(() => {
     fetchInfo();
-  }, [data]);
+  }, []);
 
+  console.log(searchResults);
   const { isOpen, onOpen, onClose } = useDisclosure();
   // const [products, setProducts] = useState([]);
 
@@ -67,31 +75,35 @@ const Dashboard = () => {
 
     const { itemName, category, price, quantity } = product; //getting the value for each property from the state (product)
 
-    const res = await fetch("http://localhost:5000/api/admin/addproduct", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        // parsing the data that is to be sent to server
-        itemName,
-        category,
-        price,
-        quantity,
-      }),
-    });
+    if (!product) {
+      alert("add data for product");
+    } else {
+      const res = await fetch("http://localhost:5000/api/admin/addproduct", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          // parsing the data that is to be sent to server
+          itemName,
+          category,
+          price,
+          quantity,
+        }),
+      });
 
-    toast("Product Added", {
-      position: toast.POSITION.TOP_CENTER,
-    });
+      toast("Product Added", {
+        position: toast.POSITION.TOP_CENTER,
+      });
 
-    const response = await res.json();
+      const response = await res.json();
 
-    // console.log(response);
-    window.location.reload();
-    alert("Product Added");
-    // onClose();
-    // reloading the component to reflect the changes
+      // console.log(response);
+      window.location.reload();
+      alert("Product Added");
+      // onClose();
+      // reloading the component to reflect the changes
+    }
   };
 
   const editProduct = () => {
@@ -127,6 +139,18 @@ const Dashboard = () => {
   // }
 
   let totalInventoryValue = 0;
+
+  const handleSearchChange = (e) => {
+    if (!e.target.value) return setSearchResults(data);
+
+    const resultsArray = data.filter(
+      (data) =>
+        data.itemName.includes(e.target.value) ||
+        data.category.includes(e.target.value)
+    );
+
+    setSearchResults(resultsArray);
+  };
 
   // deletePost();
   // window.location.reload();
@@ -171,6 +195,7 @@ const Dashboard = () => {
                 viewBox="0 0 24 24"
                 stroke-width="1.5"
                 stroke="currentColor"
+                // onClick={searchQuery}
                 class="mx-3 h-5 w-5 text-gray-400 dark:text-gray-600"
               >
                 <path
@@ -184,6 +209,7 @@ const Dashboard = () => {
             <input
               type="text"
               placeholder="Search"
+              onChange={handleSearchChange}
               class="block w-full rounded-lg border border-gray-200 bg-white py-1.5 pl-11 pr-5 text-gray-700 placeholder-gray-400/70 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 rtl:pl-5 rtl:pr-11 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-blue-300 md:w-80"
             />
           </div>
@@ -310,7 +336,7 @@ const Dashboard = () => {
                         scope="col"
                         class="px-4 py-3.5 text-left text-sm font-normal text-gray-500 rtl:text-right dark:text-gray-400"
                       >
-                        Total Value
+                        Value
                       </th>
 
                       <th
@@ -326,7 +352,7 @@ const Dashboard = () => {
                     </tr>
                   </thead>
                   <tbody class="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
-                    {data.map((dataObj, index) => {
+                    {searchResults.map((dataObj, index) => {
                       return (
                         <>
                           <tr>
