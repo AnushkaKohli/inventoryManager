@@ -7,5 +7,7 @@ router.get("/product/a/:category", findProductByCategory);
 router.post("/product", addProduct);
 router.delete("/product", deleteProduct);
 router.patch("/product", updateProduct);
+router.post("/adduser", addUser);
+router.delete("/deleteuser", deleteUser);
 
 module.exports = router;

@@ -37,7 +37,7 @@ const addProduct = async function (req, res){
             price : req.body.price,
             quantity : req.body.quantity
         });
-        newProduct.save();
+        await newProduct.save();
         res.send("Successfully added a new product.");
     }
     catch(err){
@@ -45,21 +45,11 @@ const addProduct = async function (req, res){
     };
 }
 
-const deleteProduct = async function(req,res){
-    try { 
-        const deletedProduct = req.body.deleteButton;
-
-        await Product.findByIdAndDelete({deletedProduct});
-        // await Product.findOneAndRemove({name : req.body.name});
-        res.send("Successfully deleted the product.");
-    }   
-    catch(err){
-        res.send(err);
-    };
-}
 // const deleteProduct = async function(req,res){
 //     try { 
-//         await Product.findOneAndDelete({_id : '64371515d66d8df7a8a447ab'});
+//         const deletedProduct = req.body.deleteButton;
+
+//         await Product.findByIdAndDelete({deletedProduct});
 //         // await Product.findOneAndRemove({name : req.body.name});
 //         res.send("Successfully deleted the product.");
 //     }   
@@ -68,11 +58,26 @@ const deleteProduct = async function(req,res){
 //     };
 // }
 
+const deleteProduct = async function(req,res){
+    try { 
+        await Product.findOneAndDelete({itemName : req.body.itemName})
+        .then(function(){
+            res.send("Successfully deleted the product.");
+        })
+        .catch(function(error){
+            res.send(error);
+        });
+    }   
+    catch(err){
+        res.send(err);
+    };
+}
+
 const updateProduct = async function(req,res){
     try{
-        const prod = await Product.findOneAndUpdate({name : req.body.name}, {$set: req.body});
+        const prod = await Product.findOneAndUpdate({itemName : req.body.itemName}, {$set: req.body});
         await prod.save();
-        res.send("Successfully updated the price of the product.");
+        res.send(`Successfully updated the ${req.body} of the product.`);
     }
     catch(err){
         res.send(err);
@@ -87,7 +92,7 @@ const addUser = async function (req, res){
             password : req.body.password,
             accountType : req.body.accountType,
         });
-        newUser.save();
+        await newUser.save();
         res.send("Successfully added a new user.");
     }
     catch(err){
@@ -97,7 +102,7 @@ const addUser = async function (req, res){
 
 const deleteUser = async function(req,res){
     try{
-        Product.findOneAndDelete({name : req.body.name});
+        await User.findOneAndDelete({name : req.body.name});
         res.send("Successfully deleted the user.");
     }
     catch(err){

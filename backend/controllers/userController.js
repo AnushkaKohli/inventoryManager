@@ -187,6 +187,8 @@ const logout = asyncHandler (async(req, res) => {
         message : "Successfully logged out"
     });
 });
+
+//Check if user is logged in
 const loginStatus = asyncHandler(async(req, res) => {
     const { name, email, _id,accountType } = req.user;
     console.log(req.user);
@@ -202,11 +204,23 @@ const loginStatus = asyncHandler(async(req, res) => {
     //   accountType
     // });
 });
+// const loginStatus = asyncHandler(async (req, res) => {
+//     const token = req.cookies.token;
+//     if (!token) {
+//       return res.json(false);
+//     }
+//     // Verify Token
+//     const verified = jwt.verify(token, process.env.JWT_SECRET);
+//     if (verified) {
+//       return res.json(true);
+//     }
+//     return res.json(false);
+//   });
 
 
 //Get User Data
 const getUser = asyncHandler (async(req, res) => {
-        const {_id, name, email, accountType} = user;
+        const {_id, name, email, accountType} = req.user;
         res.status(200).json({
             _id, name, email, accountType
         });
@@ -225,7 +239,7 @@ const getUser = asyncHandler (async(req, res) => {
 //     }
 // });
 
-//Get Login Status
+// //Get Login Status
 // const loginStatus = asyncHandler(async(req, res) => {
 //     const { name, email, _id, accountType } = req.user;
 //     console.log(req.user);
@@ -261,7 +275,8 @@ const updateUser = asyncHandler (async (req, res) => {
         user.accountType = req.body.accountType || accountType;
 
         const updatedUser = await user.save();
-        res.status(200).json({ _id : updatedUser._id, 
+        res.status(200).json({ 
+            _id : updatedUser._id, 
             name : updatedUser.name, 
             email : updatedUser.email, 
             accountType : updatedUser.accountType 
