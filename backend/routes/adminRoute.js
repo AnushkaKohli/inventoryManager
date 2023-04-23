@@ -10,6 +10,7 @@ const {
   deleteUser,
   getProducts,
 } = require("../controllers/adminController");
+const auth = require("../middleware/authMiddleware");
 
 router.get("/product/:itemName", findProductByName);
 router.get("/getProducts", getProducts);

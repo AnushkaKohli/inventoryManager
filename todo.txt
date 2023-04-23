@@ -4,7 +4,7 @@
 [x] data fetching
 [x] react search filter
 [x] react toastify
-[] login/signup function
+[x] login/signup function
 [] update/edit product
 [] homepage design
 

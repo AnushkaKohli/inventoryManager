@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const userSchema = mongoose.Schema(
   {
@@ -26,32 +27,9 @@ const userSchema = mongoose.Schema(
     },
     accountType: {
       type: String,
-      //   required: [true, "Please add the account type"],
-      //   enum: {
-      //     values: ["admin", "salesman", "inventory_manager"],
-      //     message:
-      //       "You must be Admin or Salesman or Inventory Manager or Sales Manager to register/login",
-      //   },
     },
-    //,
-    // photo : {
-    //     type : String,
-    //     required : [true, "Please add a password"],
-    //     default : "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/2048px-Default_pfp.svg.png"
-    // },
-    // phone : {
-    //     type : String,
-    //     default : "+033"
-    // },
-    // bio : {
-    //     type : String,
-    //     maxLength : [250, "Bio must not be more than 250 characters"],
-    //     default : "Bio"
-    // }
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
 //Encrypt password before saving to DB
@@ -67,6 +45,17 @@ userSchema.pre("save", async function (next) {
   this.password = hashedPassword;
   next();
 });
+
+userSchema.methods.generateAuthToken = async function () {
+  try {
+    const token = jwt.sign({ _id: this._id }, process.env.JWT_SECRET);
+    // this.tokens = this.tokens.concat({ token: token });
+    // await this.save();
+    return token;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const User = mongoose.model("User", userSchema);
 module.exports = User;

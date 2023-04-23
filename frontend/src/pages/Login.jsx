@@ -5,7 +5,7 @@ import { AuthContext } from "../contexts/AuthProvider";
 const Login = () => {
   let navigate = useNavigate();
   const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
-  console.log(isLoggedIn);
+  // console.log(isLoggedIn);
 
   const [user, setUser] = useState({
     email: "",
@@ -22,30 +22,40 @@ const Login = () => {
     setUser({ ...user, [name]: value }); //
   };
 
-  const loginUser = async () => {
-    const { email, password } = user;
+  const loginUser = async (e) => {
+    e.preventDefault();
 
-    const res = await fetch("http://localhost:5000/api/users/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        // parsing the data that is to be sent to server
-        email,
-        password,
-      }),
-    });
+    try {
+      const { email, password } = user;
 
-    const response = await res.json();
+      const res = await fetch("http://localhost:5000/api/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        // credentials: "same-origin",
+        body: JSON.stringify({
+          // parsing the data that is to be sent to server
+          email,
+          password,
+        }),
+      });
 
-    if (response.token) {
-      localStorage.setItem("token", response.token);
-      setIsLoggedIn(true);
+      const response = await res.json();
+      console.log(response);
+      const dataa = JSON.stringify(response);
+
+      if (response.token) {
+        localStorage.setItem("credentials", dataa);
+        console.log(response.token);
+        setIsLoggedIn(true);
+      }
+
+      console.log(response);
+      navigate("/dashboard");
+    } catch (error) {
+      console.log(error);
     }
-
-    console.log(response);
-    navigate("/dashboard");
   };
 
   return (

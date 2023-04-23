@@ -5,6 +5,9 @@ export const AuthContext = createContext();
 
 function AuthProvider({ children }) {
   const [isLoggedIn, setIsLoggedIn] = useState(true);
+  // if (localStorage.getItem("credentials")) {
+  //   setIsLoggedIn(localStorage.getItem("credentials"));
+  // }
   return (
     <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
       {children}

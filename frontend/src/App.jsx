@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import Navbar from "./components/Navbar";
 import Admin from "./pages/Admin";
 import Bills from "./pages/Bills";
