@@ -55,18 +55,16 @@ const Dashboard = () => {
       .then((res) => res.json())
       .then((d) => {
         setData(d); // getting the json data and updating the data using setData
-        return d;
-      })
-      .then((d) => {
         setSearchResults(d); // updating the array of search results
       });
   };
 
   useEffect(() => {
     fetchInfo();
+    // console.log(data);
   }, []);
 
-  console.log(searchResults);
+  // console.log(searchResults);
   const {
     isOpen: isAddOpen,
     onOpen: onAddOpen,
@@ -88,16 +86,14 @@ const Dashboard = () => {
 
   // getting the name and value for all inputs and then updating the state using setProduct
 
-  const addProduct = async () => {
-    // console.log("product added");
-    // e.preventDefault();
-
+  const addProduct = () => {
     const { itemName, category, price, quantity } = product; //getting the value for each property from the state (product)
 
     if (!product) {
       alert("add required data for product");
     } else {
-      const res = await fetch("http://localhost:5000/api/admin/addproduct", {
+      // console.log("first");
+      fetch("http://localhost:5000/api/admin/addproduct", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -109,20 +105,18 @@ const Dashboard = () => {
           price,
           quantity,
         }),
+      }).then(() => {
+        // console.log("hi");
+
+        onAddClose();
+        let msg = `Product ${itemName} added successfully`;
+
+        toast.success("Product Added", {
+          position: toast.POSITION.TOP_CENTER,
+        });
+
+        fetchInfo();
       });
-
-      toast("Product Added", {
-        position: toast.POSITION.TOP_CENTER,
-      });
-
-      const response = await res.json();
-
-      console.log(response);
-      // window.location.reload();
-      navigate("/dashboard");
-      alert("Product Added");
-      // onClose();
-      // reloading the component to reflect the changes
     }
   };
 
@@ -146,12 +140,14 @@ const Dashboard = () => {
         id,
       }),
     });
+    fetchInfo();
 
-    toast("Product Deleted", {
+    // let msg = ``
+
+    toast.error("Product Deleted", {
       position: toast.POSITION.TOP_CENTER,
     });
 
-    window.location.reload();
     // setStatus("Delete successful");
   };
 

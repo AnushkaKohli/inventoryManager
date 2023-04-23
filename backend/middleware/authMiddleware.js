@@ -3,32 +3,39 @@ const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 
 //only logged in users can access the site
-const protect = asyncHandler (async(req, res, next) => {
-    // try{
-    //     const token = req.cookies.token;
-    //     //if this token does not exist
-    //     if(!token){
-    //         res.status(401);
-    //         throw new Error("User not authorized, please login");
-    //     }
+const auth = asyncHandler(async (req, res, next) => {
+  try {
+    const token = req.cookies.jwtoken;
+    const verifyToken = jwt.verify(token, process.env.JWT_SECRET);
+  } catch (error) {
+    res.status(401).send("User not authorized, please login");
+  }
 
-    //     //Verify token and to check if the token has not expired
-    //     //We are verifing the token wrt the JWT_SECRET
-    //     const verified = jwt.verify(token, process.env.JWT_SECRET);
+  // try{
+  //     const token = req.cookies.token;
+  //     //if this token does not exist
+  //     if(!token){
+  //         res.status(401);
+  //         throw new Error("User not authorized, please login");
+  //     }
 
-    //     //get user id from token
-    //     const user = await User.findById(verified.id).select("-password");
-    //     if(!user){
-    //         res.status(401);
-    //         throw new Error("User not found");
-    //     }
-    //     req.user = user;
-    //     next();
-    // } catch (error){
-    //     res.status(401); 
-    //     throw new Error("User not authorized, please login");
-    // }
-// });
+  //     //Verify token and to check if the token has not expired
+  //     //We are verifing the token wrt the JWT_SECRET
+  //     const verified = jwt.verify(token, process.env.JWT_SECRET);
+
+  //     //get user id from token
+  //     const user = await User.findById(verified.id).select("-password");
+  //     if(!user){
+  //         res.status(401);
+  //         throw new Error("User not found");
+  //     }
+  //     req.user = user;
+  //     next();
+  // } catch (error){
+  //     res.status(401);
+  //     throw new Error("User not authorized, please login");
+  // }
+  // });
 
   let token;
   if (
@@ -54,4 +61,4 @@ const protect = asyncHandler (async(req, res, next) => {
   }
 });
 
-module.exports = protect;
+module.exports = auth;

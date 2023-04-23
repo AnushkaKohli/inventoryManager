@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
   Modal,
   ModalOverlay,
@@ -43,9 +45,6 @@ const Admin = () => {
       .then((res) => res.json())
       .then((d) => {
         setData(d);
-        return d;
-      })
-      .then((d) => {
         setSearchResults(d);
       });
   };
@@ -67,8 +66,8 @@ const Admin = () => {
     onClose: onEditClose,
   } = useDisclosure();
 
-  const addUser = async (e) => {
-    e.preventDefault();
+  const addUser = async () => {
+    // e.preventDefault();
 
     const { name, email, password, accountType } = user; //getting the value for each property from the state (product)
     if (!user) {
@@ -87,14 +86,15 @@ const Admin = () => {
           accountType,
         }),
       });
+      fetchInfo();
 
-      const response = await res.json();
+      let msg = `User ${name} added successfully`;
 
-      console.log(response);
-      // onClose();
-      window.location.reload(); // reloading the component to reflect the changes
-      // console.log("userAdeed");
-      alert("userAdeed");
+      toast.success(msg, {
+        position: toast.POSITION.TOP_CENTER,
+      });
+
+      onAddClose();
     }
   };
 
@@ -113,8 +113,10 @@ const Admin = () => {
         id,
       }),
     });
-    // setStatus("Delete successful");
-    window.location.reload();
+    fetchInfo();
+    toast.error("Product Deleted", {
+      position: toast.POSITION.TOP_CENTER,
+    });
   };
 
   const handleSearchChange = (e) => {
@@ -132,6 +134,7 @@ const Admin = () => {
       <div className="text-4xl flex justify-center p-4 font-semibold">
         Admin Dashboard
       </div>
+      <ToastContainer />
       <section class="container mx-auto px-4">
         {/* <div class="sm:flex sm:items-center sm:justify-between">
           <div class="mt-4 flex items-center gap-x-3">
