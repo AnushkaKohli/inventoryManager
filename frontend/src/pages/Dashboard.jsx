@@ -38,6 +38,7 @@ const Dashboard = () => {
 
   let name, value; //declaring the variable
 
+  let outOfStock = 0;
   const handleChange = (e) => {
     // console.log(e);
     name = e.target.name;
@@ -109,13 +110,13 @@ const Dashboard = () => {
         // console.log("hi");
 
         onAddClose();
+
+        fetchInfo();
         let msg = `Product ${itemName} added successfully`;
 
         toast.success("Product Added", {
           position: toast.POSITION.TOP_CENTER,
         });
-
-        fetchInfo();
       });
     }
   };
@@ -157,6 +158,7 @@ const Dashboard = () => {
   // }
 
   let totalInventoryValue = 0;
+  let totalQuantity = 0;
 
   const handleSearchChange = (e) => {
     if (!e.target.value) return setSearchResults(data);
@@ -399,6 +401,12 @@ const Dashboard = () => {
                               <div>
                                 <h4 class="text-gray-700 dark:text-gray-200">
                                   {dataObj.quantity}
+                                  <p className="hidden">
+                                    {(totalQuantity += dataObj.quantity)}
+                                    {dataObj.quantity === 0
+                                      ? (outOfStock += 1)
+                                      : null}
+                                  </p>
                                 </h4>
                               </div>
                             </td>
@@ -624,8 +632,14 @@ const Dashboard = () => {
         </div>
         {/* <button onClick={notify}> Notify </button> */}
         <div class="flex justify-center items-center mt-5">
-          <div class="bg-gray-50 p-4 rounded-lg w-fit text-xl font-medium shadow-lg text-blue-500">
+          <div class="bg-gray-50 p-4 rounded-lg w-fit text-xl font-medium shadow-lg text-blue-500 hover:bg-gray-100 cursor-pointer">
             Total Inventory Value = {totalInventoryValue}
+          </div>
+          <div class="bg-gray-50 p-4 ml-2 rounded-lg w-fit text-xl font-medium shadow-lg text-blue-500 hover:bg-gray-100 cursor-pointer">
+            Total Quantity = {totalQuantity}
+          </div>
+          <div class="bg-gray-50 p-4 ml-2 rounded-lg w-fit text-xl font-medium shadow-lg text-red-500 hover:bg-gray-100 cursor-pointer">
+            Items Out of Stock = {outOfStock}
           </div>
         </div>
       </section>
