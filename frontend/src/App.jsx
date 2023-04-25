@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import Navbar from "./components/Navbar";
 import Admin from "./pages/Admin";
 import Bills from "./pages/Bills";
+import BillCard from "./components/BillCard";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
@@ -34,6 +35,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
+            <Route path="/billSection" element={<BillCard />} />
             <Route element={<ProtectedRoutes />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/admin" element={<Admin />} />

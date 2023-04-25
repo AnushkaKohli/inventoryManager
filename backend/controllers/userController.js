@@ -10,14 +10,6 @@ const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1d" });
 };
 
-// const registerUser = (req, res) => {
-//     if(!req.body.email){
-//         res.status(400);
-//         throw new Error("Please add an email");
-//     }
-//     res.send("Register User")
-// };
-
 //Register user
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password, accountType } = req.body;
@@ -88,89 +80,26 @@ const registerUser = asyncHandler(async (req, res) => {
 //Login User
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-
-  //Validate Request
   if (!email || !password) {
     res.status(400);
-    throw new Error("Please add email and password");
+    throw new Error("Enter all details");
   }
-
-  //Check if user email exists in the database
-  const user = await User.findOne({ email });
-  if (!user) {
-    res.status(400);
-    throw new Error("User not found, please register");
-  }
-  //User exists, check if the password is correct
-  const passwordIsCorrect = await bcrypt.compare(password, user.password);
-
-  //Generate Token
-  // const token = generateToken(user._id);
-
-  // //Send HTTP-only cookie
-  // res.cookie("token", token, {
-  //     path : "/",
-  //     httpOnly : true,
-  //     expires : new Date(Date.now() + 1000 * 86400),
-  //     sameSite : "none",
-  //     secure : true
-  // });
-  if (user && passwordIsCorrect) {
+  const user = await User.findOne({
+    email,
+  });
+  if (user && (await bcrypt.compare(password, user.password))) {
     res.json({
       _id: user.id,
       name: user.name,
       email: user.email,
+      accountType: user.accountType,
       token: generateToken(user.id),
     });
   } else {
     res.status(400);
-    throw new Error("Invalid email or passowrd");
+    throw new Error("Wrong credentials");
   }
 });
-// const loginUser = asyncHandler ( async (req, res) => {
-//     const{ email, password } = req.body;
-
-//     //Validate Request
-//     if (!email || !password) {
-//         res.status(400);
-//         throw new Error ("Please add email and password");
-//     }
-
-//     //Check if user email exists in the database
-//     const user = await User.findOne({ email });
-//     if (!user) {
-//         res.status(400);
-//         throw new Error ("User not found, please register");
-//     }
-//     //User exists, check if the password is correct
-//     const passwordIsCorrect = await bcrypt.compare(password, user.password);
-
-//     //Generate Token
-//     const token = generateToken(user._id);
-
-//     //Send HTTP-only cookie
-//     if(passwordIsCorrect){
-//         res.cookie("token", token, {
-//             path : "/",
-//             httpOnly : true,
-//             expires : new Date(Date.now() + 1000 * 86400),
-//             sameSite : "none",
-//             secure : true
-//         });
-//     }
-//     if (user && passwordIsCorrect){
-//         const { _id, name, email, accountType } = user;
-//         res.status(200).json({
-//             _id, name, email, accountType, token
-//         });
-//         // res.send("Successfully logged in");
-//     }
-//     else{
-//         res.status(400);
-//         throw new Error ("Invalid email or passowrd");
-//     }
-// });
-
 //Logout User
 const logout = asyncHandler(async (req, res) => {
   res.cookie("token", "", {
@@ -200,18 +129,6 @@ const loginStatus = asyncHandler(async (req, res) => {
   //   accountType
   // });
 });
-// const loginStatus = asyncHandler(async (req, res) => {
-//     const token = req.cookies.token;
-//     if (!token) {
-//       return res.json(false);
-//     }
-//     // Verify Token
-//     const verified = jwt.verify(token, process.env.JWT_SECRET);
-//     if (verified) {
-//       return res.json(true);
-//     }
-//     return res.json(false);
-//   });
 
 //Get User Data
 const getUsers = asyncHandler(async (req, res) => {
@@ -219,48 +136,11 @@ const getUsers = asyncHandler(async (req, res) => {
     const results = await User.find({}, { __v: 0 });
     // const data = JSON.stringify(results).toArray();
     res.send(results);
+    // res.send(req.rootUser);
   } catch (err) {
     res.send(err);
   }
 });
-
-//     const user = await User.findById(req.user._id);
-//     if(user){
-//         const {_id, name, email, accountType} = user;
-//         res.status(200).json({
-//             _id, name, email, accountType
-//         });
-//     }
-//     else{
-//         res.status(400);
-//         throw new Error ("User not found");
-//     }
-// });
-
-// //Get Login Status
-// const loginStatus = asyncHandler(async(req, res) => {
-//     const { name, email, _id, accountType } = req.user;
-//     console.log(req.user);
-//     if(!name && !email && !_id && !accountType){
-//         res.status(401).json(false);
-//     }else{
-//         res.status(200).json(true);
-//     }
-// });
-// const loginStatus = asyncHandler(async(req, res) => {
-//     const token = req.cookies.token;
-//     console.log(req.cookies);
-//     if(!token){
-//         return res.json(false);
-//     }
-//     //Verify token and to check if the token has not expired
-//     //We are verifing the token wrt the JWT_SECRET
-//     const verified = jwt.verify(token, process.env.JWT_SECRET);
-//     if(verified){
-//         return res.json(true);
-//     }
-//     return res.json(false);
-// });
 
 // Delete User
 const deleteUser = async function (req, res) {

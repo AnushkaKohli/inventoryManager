@@ -11,17 +11,17 @@ const {
   changePassword,
   forgotPassword,
 } = require("../controllers/userController");
-const protect = require("../middleware/authMiddleware");
+const auth = require("../middleware/authMiddleware");
 
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.get("/logout", logout);
-router.get("/loggedin", protect, loginStatus);
+// router.get("/loggedin", auth, loginStatus);
 router.get("/getUsers", getUsers);
 router.delete("/deleteUser", deleteUser);
-router.get("/loggedin", loginStatus);
-router.patch("/updateuser", protect, updateUser);
-router.patch("/changepassword", protect, changePassword);
-router.post("/forgotPassword", forgotPassword);
+// router.get("/loggedin", loginStatus);
+// router.patch("/updateuser", auth, updateUser);
+// router.patch("/changepassword", auth, changePassword);
+// router.post("/forgotPassword", forgotPassword);
 
 module.exports = router;

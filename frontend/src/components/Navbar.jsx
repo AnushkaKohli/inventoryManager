@@ -6,6 +6,15 @@ const Navbar = () => {
   let navigate = useNavigate();
   const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
   console.log(isLoggedIn);
+  let namee = "";
+  if (localStorage.getItem("credentials")) {
+    namee = "Hey! " + JSON.parse(localStorage.getItem("credentials")).name;
+  }
+  const logout = () => {
+    navigate("/");
+    localStorage.clear();
+    setIsLoggedIn(false);
+  };
   return (
     <>
       <nav className="bg-gray-100 border-gray-200 dark:bg-gray-900">
@@ -21,16 +30,20 @@ const Navbar = () => {
           </a>
           <div className="flex md:order-2">
             {isLoggedIn ? (
-              <button
-                type="button"
-                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center mr-3 md:mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                onClick={() => {
-                  setIsLoggedIn(false);
-                  // navigate("/logout");
-                }}
-              >
-                Logout
-              </button>
+              <>
+                <div className="mr-5 text-lg font-medium text-orange-600">
+                  {namee}
+                </div>
+                <button
+                  type="button"
+                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center mr-3 md:mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  onClick={() => {
+                    logout();
+                  }}
+                >
+                  Logout
+                </button>
+              </>
             ) : (
               <>
                 <button
