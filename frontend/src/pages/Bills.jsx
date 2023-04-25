@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import BillCard from "../components/BillCard";
 import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -22,6 +22,8 @@ const Bills = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [counter, setCounter] = useState(0);
 
+  let navigate = useNavigate();
+
   const [data, setData] = useState([]);
   const [bills, setBills] = useState({
     customerName: "",
@@ -34,6 +36,8 @@ const Bills = () => {
 
   let name, value;
 
+  let billNo = 0;
+
   const handleChange = (e) => {
     // console.log(e);
     name = e.target.name;
@@ -42,14 +46,14 @@ const Bills = () => {
     setBills({ ...bills, [name]: value });
   };
 
-  let invoiceNumber = "INV270" + counter;
+  let invoiceNumber = "INV270" + billNo;
 
   const fetchInfo = () => {
-    return fetch("http://localhost:5000/api/admin/getProducts")
+    return fetch("http://localhost:5000/api/bill/getBill")
       .then((res) => res.json())
       .then((d) => {
         setData(d); // getting the json data and updating the data using setData
-        setSearchResults(d); // updating the array of search results
+        // setSearchResults(d); // updating the array of search results
       });
   };
 
@@ -65,7 +69,7 @@ const Bills = () => {
       alert("add required data for product");
     } else {
       // console.log("first");
-      fetch("http://localhost:5000/api/admin/addproduct", {
+      fetch("http://localhost:5000/api/bill/addBill", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -83,6 +87,8 @@ const Bills = () => {
         // console.log("hi");
 
         onClose();
+
+        billNo = +1;
 
         fetchInfo();
 
@@ -103,6 +109,22 @@ const Bills = () => {
 
   const deleteField = () => {
     setCounter(counter - 1);
+  };
+
+  const deleteBill = async (id) => {
+    await fetch("http://localhost:5000/api/bill/delete", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id,
+      }),
+    });
+    fetchInfo();
+    toast.error("Product Deleted", {
+      position: toast.POSITION.TOP_CENTER,
+    });
   };
 
   // getting the data from the form inputs
@@ -268,7 +290,7 @@ const Bills = () => {
                         </div>
                       </td>
                     </tr>
-                    {bills.map((dataObj, index) => {
+                    {data.map((dataObj, index) => {
                       return (
                         <>
                           <tr>
