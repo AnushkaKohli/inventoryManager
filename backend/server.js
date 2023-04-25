@@ -8,6 +8,7 @@ const cookieParser = require("cookie-parser");
 
 const userRoute = require("./routes/userRoute");
 const adminRoute = require("./routes/adminRoute");
+const billRoute = require("./routes/billRoute");
 const errorHandler = require("./middleware/errorMiddleware");
 
 const app = express();
@@ -23,6 +24,7 @@ app.use(cors());
 //Routes Middleware
 app.use("/api/users", userRoute);
 app.use("/api/admin", adminRoute);
+app.use("/api/bill", billRoute);
 
 //Routes
 app.get("/", (req, res) => {
@@ -33,24 +35,12 @@ app.get("/", (req, res) => {
 app.use(errorHandler);
 
 //Connecting to mongoDB
-<<<<<<< HEAD
-const PORT = process.env.PORT || 3000;
-mongoose.connect(process.env.MONGO_URI)
-    .then(function(){
-        app.listen(PORT, function(){
-            console.log(`Server started on port ${PORT}`);
-        })
-    })
-    .catch(function(err){
-        console.log(err);
-=======
 const PORT = process.env.PORT || 5000;
 mongoose
   .connect(process.env.MONGO_URI)
   .then(function () {
     app.listen(PORT, function () {
       console.log(`Server started on port ${PORT}`);
->>>>>>> d1fd1cf72ec5347ebccefad06cc8d349a850f19c
     });
   })
   .catch(function (err) {

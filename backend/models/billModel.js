@@ -3,33 +3,40 @@ const mongoose = require("mongoose");
 const billSchema = mongoose.Schema({
     billType : {
         type : String,
-        enum : {
-            values : ['New', 'Return', 'Cancel'],
-        }
     },
     customerName : {
-        type : String,
-        required : [true, "Please add the name of the customer"]
+        type : String
     },
-    invoiceNo : {
+    cashierName : {
         type : String,
-        required : true
     },
     date : {
         type : Date,
-        required : true
     },
-    cashier : {
-        type : String
+    itemName: {
+        type: String
     },
-    item : [SNo, itemName, unitPrice, discount, amount],
+    quantity : {
+        type: String
+    },
+    price: {
+        type: Number
+    },
+    // item : [SNo, itemName, unitPrice, discount, amount],
     tax : {
         type : Number
     },
     total : {
         type : Number
     }
-});
+    // paymentMode: {},
+    // status: {
+    //     type: String,
+    //     default: "Not Process",
+    //     enum: ["Not Process", "Processing", "Shipped", "delivered", "cancel"],
+    // },
+}
+);
 
 const Bill = mongoose.model("Bill", billSchema);
 module.exports = Bill;

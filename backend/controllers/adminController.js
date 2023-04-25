@@ -38,7 +38,7 @@ const addProduct = async function (req, res) {
   }
 };
 
-// get a arry of all products
+// get a array of all products
 const getProducts = async function (req, res) {
   try {
     const results = await Product.find({}, { __v: 0 });
