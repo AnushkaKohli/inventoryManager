@@ -156,9 +156,10 @@ const Admin = () => {
     <>
       <div className="text-4xl flex justify-center p-4 font-semibold">
         Users Dashboard
-        <div className="inline rounded-full bg-gray-100 py-2 ml-2 px-5 text-lg font-normal text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+        {JSON.parse(localStorage.getItem("credentials")) ? <div className="inline rounded-full bg-gray-100 py-2 ml-2 px-5 text-lg font-normal text-gray-500 dark:bg-gray-800 dark:text-gray-400">
           {JSON.parse(localStorage.getItem("credentials")).accountType} View
-        </div>
+        </div> : null}
+        
       </div>
       <ToastContainer />
       <section className="container mx-auto px-4">

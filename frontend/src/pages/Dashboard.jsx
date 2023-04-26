@@ -270,7 +270,7 @@ const Dashboard = () => {
                     value={product.itemName}
                     onChange={handleChange}
                     name="itemName"
-                    placeholder="product X"
+                    placeholder="Product"
                     type="text"
                   />
                 </FormControl>
@@ -632,13 +632,13 @@ const Dashboard = () => {
         </div>
         {/* <button onClick={notify}> Notify </button> */}
         <div class="flex justify-center items-center mt-5">
-          <div class="bg-gray-50 p-4 rounded-lg w-fit text-xl font-medium shadow-lg text-blue-500 hover:bg-gray-100 cursor-pointer">
+          <div class="bg-gray-50 mx-20 p-4 rounded-lg w-fit text-xl font-medium shadow-lg text-blue-500 hover:bg-gray-100 cursor-pointer">
             Total Inventory Value = {totalInventoryValue}
           </div>
-          <div class="bg-gray-50 p-4 ml-2 rounded-lg w-fit text-xl font-medium shadow-lg text-blue-500 hover:bg-gray-100 cursor-pointer">
+          <div class="bg-gray-50 mx-20 p-4 ml-2 rounded-lg w-fit text-xl font-medium shadow-lg text-blue-500 hover:bg-gray-100 cursor-pointer">
             Total Quantity = {totalQuantity}
           </div>
-          <div class="bg-gray-50 p-4 ml-2 rounded-lg w-fit text-xl font-medium shadow-lg text-red-500 hover:bg-gray-100 cursor-pointer">
+          <div class="bg-gray-50 mx-20 p-4 ml-2 rounded-lg w-fit text-xl font-medium shadow-lg text-red-500 hover:bg-gray-100 cursor-pointer">
             Items Out of Stock = {outOfStock}
           </div>
         </div>
